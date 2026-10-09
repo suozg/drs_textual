@@ -71,7 +71,7 @@ jobs:
       - name: Build application
         run: |
           . venv/bin/activate
-          pyinstaller --clean --noconfirm --onefile --name drs_textual --collect-submodules textual --add-data "styles.tcss:." main_frame.py
+          pyinstaller --clean --noconfirm --onefile --name drs_textual.bin --collect-submodules textual --add-data "styles.tcss:." main_frame.py
 
       - uses: actions/upload-artifact@v4
         with:
