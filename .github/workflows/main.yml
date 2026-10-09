@@ -28,7 +28,7 @@ jobs:
 
       - name: Build application
         run: |
-          pyinstaller --clean --noconfirm --onefile --name drs_textual --add-data "styles.tcss;." main_frame.py
+          pyinstaller --clean --noconfirm --onefile --name drs_textual --collect-submodules textual --add-data "styles.tcss;." main_frame.py
 
       - uses: actions/upload-artifact@v4
         with:
@@ -71,11 +71,11 @@ jobs:
       - name: Build application
         run: |
           . venv/bin/activate
-          pyinstaller --clean --noconfirm --onefile --name drs_textual --add-data "styles.tcss:." main_frame.py
+          pyinstaller --clean --noconfirm --onefile --name drs_textual --collect-submodules textual --add-data "styles.tcss:." main_frame.py
 
       - uses: actions/upload-artifact@v4
         with:
           name: drs_textual-debian12
-          path: dist/drs_textual
+          path: dist/drs_textual.bin
           if-no-files-found: error
 
