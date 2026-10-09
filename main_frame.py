@@ -24,13 +24,16 @@ from tabs.tab_settings import SettingsTab
 
 class PasswordModal(ModalScreen[str | None]):
     """Запит майстер-пароля."""
-    BINDINGS = [("ctrl+q", "quit_app", "Вихід")]
+    BINDINGS = [
+        ("ctrl+q", "quit_app", "Вихід              © 2026 Холодов О.В. [github/suozg]")
+    ]
 
     def compose(self) -> ComposeResult:
         with Grid(id="dialog"):
             yield Static("Введіть Майстер-Пароль", id="password_prompt")
             yield Input(password=True, placeholder="Майстер-пароль", id="master_pwd_input")
             yield Button("Увійти", id="btn_login", variant="primary")
+            yield Footer()
 
     def action_quit_app(self) -> None: self.app.exit()
 

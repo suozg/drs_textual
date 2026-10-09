@@ -430,6 +430,11 @@ ModalScreen {
     text-style: bold;
 }
 
+#password_prompt {
+    color: #fabd2f;                 /* Яскраво-жовтий колір Gruvbox */
+    text-style: bold;
+}
+
 /* Базові контейнери інтерфейсу */
 .container {
     background: $background;
@@ -515,3 +520,6 @@ AboutTab Horizontal {
     width: 6;
     min-width: 6;
 }
+
+
+
