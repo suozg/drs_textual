@@ -1,5 +1,5 @@
 # tabs/tab_search.py
-import os, re, threading
+import os, re, threading, platform, subprocess
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import pyperclip
@@ -66,17 +66,39 @@ class DocumentTextArea(TextArea):
         self._visual_mode = False
         self._visual_anchor = None
 
-    def copy_text(self, text: str) -> None:
-        """Надійне копіювання у системний буфер обміну."""
+    def copy_text(self, text: str) -> bool:
+        """Копіювання до системного буфера обміну в різних ОС."""
+        system = platform.system()
+
+        commands = {
+            "Linux": ["xclip", "-selection", "clipboard"],
+            "Windows": ["clip"],
+            "Darwin": ["pbcopy"],
+        }
+
+        command = commands.get(system)
+        if command is None:
+            self.app.notify(
+                f"Непідтримувана ОС: {system}",
+                severity="error",
+            )
+            return False
+
         try:
-            self.app.copy_to_clipboard(text)
-        except Exception:
-            pass
-            
-        try:
-            pyperclip.copy(text)
-        except Exception:
-            pass
+            subprocess.run(
+                command,
+                input=text,
+                text=True,
+                check=True,
+                timeout=5,
+            )
+            return True
+        except (OSError, subprocess.SubprocessError) as exc:
+            self.app.notify(
+                f"Помилка копіювання: {exc}",
+                severity="error",
+            )
+            return False
 
     def _move_to(self, row: int, col: int) -> None:
         """Переміщення курсора з урахуванням visual mode."""
