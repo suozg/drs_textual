@@ -1,0 +1,79 @@
+
+name: Build Windows + Debian 12
+
+on:
+  workflow_dispatch:
+
+jobs:
+  # ---------------- WINDOWS ----------------
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install textual sqlcipher3-wheels python-docx requests pyinstaller
+
+      - name: Clean previous builds
+        run: |
+          if (Test-Path dist) { Remove-Item -Recurse -Force dist }
+          if (Test-Path build) { Remove-Item -Recurse -Force build }
+
+      - name: Build application
+        run: |
+          pyinstaller --clean --noconfirm --name drs_textual --add-data "styles.tcss;." main.py
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: drs_textual-windows
+          path: dist/drs_textual/
+
+
+  # ---------------- DEBIAN 12 ----------------
+  build-debian:
+    runs-on: ubuntu-latest
+
+    container:
+      image: debian:12
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install system dependencies
+        run: |
+          apt-get update
+          apt-get install -y \
+            python3 \
+            python3-venv \
+            python3-dev \
+            build-essential \
+            libsqlcipher-dev
+
+      - name: Setup venv and install dependencies
+        run: |
+          python3 -m venv venv
+          . venv/bin/activate
+          pip install --upgrade pip setuptools wheel
+          pip install textual sqlcipher3-wheels python-docx requests pyinstaller
+
+      - name: Clean previous builds
+        run: |
+          rm -rf build dist
+
+      - name: Build application
+        run: |
+          . venv/bin/activate
+          pyinstaller --clean --noconfirm --name drs_textual --add-data "styles.tcss:." main.py
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: drs_textual-debian12
+          path: dist/drs_textual/
+
