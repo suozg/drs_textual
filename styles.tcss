@@ -6,25 +6,25 @@
 
 /* Головне вікно додатка (темна тема Gruvbox) */
 Screen {
-    background: #282828;            /* Темно-сірий фоновий колір */
-    color: #ebdbb2;                 /* Світло-бежевий колір тексту */
+    background: $background;            /* Темно-сірий фоновий колір */
+    color: $foreground;                 /* Світло-бежевий колір тексту */
 }
 
 /* Базові поля введення тексту (Input) */
 Input {
-    background: #3c3836;            /* Фон поля введення */
-    color: #ebdbb2;                 /* Колір тексту */
-    border: solid #665c54;          /* Рамка поля у звичайному стані */
+    background: $surface;            /* Фон поля введення */
+    color: $foreground;                 /* Колір тексту */
+    border: solid $border;          /* Рамка поля у звичайному стані */
 }
 
 /* Поле введення при отриманні фокусу (активне) */
 Input:focus {
-    border: solid #d79921;          /* Жовта/золотиста рамка при фокусі */
+    border: solid $accent;          /* Жовта/золотиста рамка при фокусі */
 }
 
 /* Текст всередині Input на позиції курсора */
 Input > .input--cursor {
-    color: #ebdbb2;                 /* Колір символу під курсором */
+    color: $foreground;                 /* Колір символу під курсором */
 }
 
 
@@ -258,15 +258,15 @@ ConfirmDeleteScreen {
     width: 30;
     min-width: 20;
     height: 3;
-    background: #3c3836;
-    color: #ebdbb2;
-    border: solid #665c54;
+    background: $surface;
+    color: $foreground;
+    border: solid $border;
     content-align: left middle;
 }
 
 /* Випадаючий список у стані фокусу */
 #import_db_select:focus {
-    border: solid #d79921;
+    border: solid $accent;
 }
 
 /* Поле введення шляху до папки імпорту */
@@ -329,15 +329,15 @@ ConfirmDeleteScreen {
     width: 30;
     min-width: 20;
     height: 3;
-    background: #3c3836;
-    color: #ebdbb2;
-    border: solid #665c54;
+    background: $surface;
+    color: $foreground;
+    border: solid $border;
     content-align: left middle;
 }
 
 /* Активний стан списку БД */
 #sql_db_select:focus {
-    border: solid #d79921;
+    border: solid $accent;
 }
 
 /* Текст з інформацією про вибрану БД */
@@ -383,44 +383,44 @@ ConfirmDeleteScreen {
 
 /* Стандартні кнопки */
 Button {
-    background: #504945;            /* Фон звичайної кнопки */
-    color: #ebdbb2;                 /* Колір тексту */
-    border: solid #665c54;          /* Рамка */
+    background: $panel;            /* Фон звичайної кнопки */
+    color: $foreground;                 /* Колір тексту */
+    border: solid $border;          /* Рамка */
 }
 
 /* Кнопки при наведенні миші або отриманні фокусу */
 Button:hover,
 Button:focus {
-    background: #665c54;            /* Світліший фон */
-    color: #fbf1c7;                 /* Яскравіший текст */
+    background: $border;            /* Світліший фон */
+    color: $text;                 /* Яскравіший текст */
 }
 
 /* Головні/акцентні кнопки (-primary) */
 Button.-primary {
-    background: #458588;            /* Синьо-зелений фон */
-    color: #fbf1c7;
+    background: $primary;            /* Синьо-зелений фон */
+    color: $text;
 }
 
 /* Головні кнопки при наведенні */
 Button.-primary:hover {
-    background: #689d6a;            /* Зелений фон */
-    color: #ffffff;
+    background: $success;            /* Зелений фон */
+    color: $text;
 }
 
 /* Базовий стиль для всіх текстових міток (Static) */
 Static {
-    color: #ebdbb2;
+    color: $foreground;
 }
 
 /* Стандартні модальні екрани додатка */
 ModalScreen {
-    background: #282828 90%;        /* 90% непрозорості темного фону */
+    background: $background 90%;        /* 90% непрозорості темного фону */
 }
 
 /* Загальні діалогові блоки всередині модальних вікон */
 #dialog {
-    background: #3c3836;
-    border: solid #665c54;
+    background: $surface;
+    border: solid $border;
     padding: 1 2;
 }
 
@@ -432,18 +432,18 @@ ModalScreen {
 
 /* Базові контейнери інтерфейсу */
 .container {
-    background: #282828;
+    background: $background;
 }
 
 /* Сітки вибору (Grid) */
 Grid {
-    background: #3c3836;
+    background: $surface;
 }
 
 /* Нижня панель статусів підказок (Footer) */
 Footer {
-    background: #1d2021;            /* Майже чорний фон */
-    color: #ebdbb2;
+    background: $panel;            /* Майже чорний фон */
+    color: $foreground;
 }
 
 
@@ -461,8 +461,8 @@ AboutTab Horizontal {
 #about_help_text {
     width: 1fr;                     /* Рівномірно ділить простір із грою */
     height: 100%;
-    background: #1e1e1e;            /* Темний фоновий колір для довідки */
-    border: solid #333333;          /* Строга темна рамка */
+    background: $surface;            /* Темний фоновий колір для довідки */
+    border: solid $border;          /* Строга темна рамка */
     margin-right: 1;                /* Відступ справа від блоку гри */
     padding: 1;
 }
@@ -471,8 +471,8 @@ AboutTab Horizontal {
 #sokoban_container {
     width: 1fr;                     /* Рівномірно ділить простір із довідкою */
     height: 100%;
-    background: #252526;            /* Тільки світліший тон фону для контрасту з лівою частиною */
-    border: solid #007acc;          /* Акцентна синя рамка навколо ігрової зони */
+    background: $panel;            /* Тільки світліший тон фону для контрасту з лівою частиною */
+    border: solid $accent;          /* Акцентна синя рамка навколо ігрової зони */
     padding: 1;
     align: center middle;           /* Центрування ігрових елементів */
 }
@@ -490,8 +490,8 @@ AboutTab Horizontal {
     width: 1fr;
     height: 1fr;                    /* Займає максимальний доступний простір */
     content-align: center middle;   /* Центрування карти рівня всередині віджета */
-    background: #1d1d1d;            /* Глибокий темний фон поля */
-    border: inner #444444;          /* Внутрішня рамка для ефекту заглиблення */
+    background: $surface;            /* Глибокий темний фон поля */
+    border: inner $border;          /* Внутрішня рамка для ефекту заглиблення */
     margin-bottom: 1;               /* Відступ між грою та кнопками перемикання рівнів */
 }
 

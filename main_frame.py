@@ -5,11 +5,12 @@ from textual.containers import Container, Grid
 from textual.screen import ModalScreen
 from textual.widgets import Header, Footer, TabbedContent, TabPane, Input, Button, Static, Select
 from textual import events
+from pathlib import Path
+import sys
 
 import config
 from settings_db import init_settings_db, get_databases_list, add_database_to_settings, verify_database_password
 from database import create_new_database
-
 from tabs.tab_search import SearchTab
 from tabs.tab_import import ImportTab
 from tabs.tab_sql import SqlTab
@@ -187,6 +188,7 @@ class DrsApp(App):
 
     BINDINGS = [
         ("ctrl+q", "quit", "Вихід"),
+        ("f6", "toggle_theme", "Змінити тему"),
     ]
 
     # ПРІОРИТЕТНИЙ ОБРОБНИК КЛАВІШ (Перехоплює F1-F5 до полів ввода)
@@ -200,6 +202,7 @@ class DrsApp(App):
         }
         
         key = event.key.lower()
+       
         if key in tab_map:
             # Скинути поточний фокус, щоб поля ввода не блокували інтерфейс
             self.set_focus(None)
@@ -214,8 +217,48 @@ class DrsApp(App):
             event.stop()
             event.prevent_default()
 
+    def is_lightmode_enabled(self) -> bool:
+        return (
+            sys.platform.startswith("linux")
+            and (Path.home() / ".lightmode").exists()
+        )
+
+    def get_initial_theme(self) -> str:
+        return (
+            "textual-light"
+            if self.is_lightmode_enabled()
+            else "textual-dark"
+            )
+
+    def action_toggle_theme(self) -> None:
+        self.theme = (
+            "textual-dark"
+            if self.theme == "textual-light"
+            else "textual-light"
+        )
+
+    def check_system_theme(self) -> None:
+        current_state = self.is_lightmode_enabled()
+
+        if current_state == self._last_lightmode_state:
+            return
+
+        self._last_lightmode_state = current_state
+        self.theme = (
+            "textual-light"
+            if current_state
+            else "textual-dark"
+        )
+
     def on_mount(self) -> None:
-        self.push_screen(PasswordModal(), self.on_password_entered)
+        self.theme = self.get_initial_theme()
+        self._last_lightmode_state = self.is_lightmode_enabled()
+        self.set_interval(5, self.check_system_theme)
+
+        self.push_screen(
+            PasswordModal(),
+            self.on_password_entered,
+        )
 
     def on_password_entered(self, master_password: str | None) -> None:
         if not master_password:

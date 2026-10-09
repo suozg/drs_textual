@@ -2,12 +2,13 @@
 import os, re, threading
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
-
+import pyperclip
 from textual.app import ComposeResult
 from textual.containers import Container, Horizontal, Vertical
 from textual.widgets import Static, Button, Input, OptionList, TextArea
 from textual.widgets.option_list import Option
 from textual.screen import ModalScreen
+from textual.widgets.text_area import Selection
 
 import config
 from database import connect_to_specific_database, check_patch_db
@@ -44,6 +45,134 @@ class ResultsList(OptionList):
         self.highlighted = 0 if self.highlighted is None else max(self.highlighted - 1, 0)
 
 
+class DocumentTextArea(TextArea):
+    """Vim-подібна навігація текстом документа (з підтримкою UKR та ENG розкладок)."""
+
+    # Мапінг українських клавіш на латинські
+    KEY_MAP = {
+        "о": "j",
+        "л": "k",
+        "н": "y",
+        "п": "g",
+        "м": "v",
+        "П": "G",
+        "shift+п": "G",
+        "shift+g": "G",
+    }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._pending_key = None
+        self._visual_mode = False
+        self._visual_anchor = None
+
+    def copy_text(self, text: str) -> None:
+        """Надійне копіювання у системний буфер обміну."""
+        try:
+            self.app.copy_to_clipboard(text)
+        except Exception:
+            pass
+            
+        try:
+            pyperclip.copy(text)
+        except Exception:
+            pass
+
+    def _move_to(self, row: int, col: int) -> None:
+        """Переміщення курсора з урахуванням visual mode."""
+        target = (row, col)
+
+        if self._visual_mode and self._visual_anchor is not None:
+            self.selection = Selection(
+                start=self._visual_anchor,
+                end=target,
+            )
+        else:
+            self.selection = Selection.cursor(target)
+
+        self.scroll_cursor_visible()
+
+    def on_key(self, event) -> None:
+        # Нормалізуємо клавішу до латинського аналога
+        raw_key = event.key
+        key = self.KEY_MAP.get(raw_key, raw_key)
+
+        row, col = self.cursor_location
+        lines = self.text.splitlines() or [""]
+
+        # 1. Обробка другої клавіші комбінацій (gg / yy чи пп / нн)
+        if self._pending_key is not None:
+            pending = self._pending_key
+            self._pending_key = None
+
+            if pending == "g" and key == "g":
+                self._move_to(0, 0)
+                event.stop()
+                event.prevent_default()
+                return
+
+            if pending == "y" and key == "y":
+                if 0 <= row < len(lines):
+                    line_text = lines[row] + "\n"
+                    self.copy_text(line_text)
+                    self.app.notify("Рядок скопійовано.")
+                event.stop()
+                event.prevent_default()
+                return
+
+        # 2. Visual Mode: Копіювання виділеного за допомогою 'y' / 'н'
+        if key == "y" and self._visual_mode:
+            selected = self.selected_text
+            if selected:
+                self.copy_text(selected)
+                self.app.notify("Виділений текст скопійовано.")
+            
+            self._visual_mode = False
+            self._visual_anchor = None
+            self.selection = Selection.cursor(self.cursor_location)
+            event.stop()
+            event.prevent_default()
+            return
+
+        # 3. Зафіксувати першу клавішу (g/п або y/н)
+        if key in ("g", "y") and not self._visual_mode:
+            self._pending_key = key
+            event.stop()
+            event.prevent_default()
+            return
+
+        # 4. Навігація j/о (вниз) та k/л (вгору)
+        if key in ("j", "k"):
+            delta = 1 if key == "j" else -1
+            target_row = max(0, min(row + delta, len(lines) - 1))
+            target_col = min(col, len(lines[target_row]))
+            self._move_to(target_row, target_col)
+            event.stop()
+            event.prevent_default()
+            return
+
+        # 5. Перехід у кінець (G / Shift+G / Shift+П)
+        if key == "G":
+            last_row = len(lines) - 1
+            self._move_to(last_row, len(lines[last_row]))
+            event.stop()
+            event.prevent_default()
+            return
+
+        # 6. Увімкнення / вимкнення visual mode (v / м)
+        if key == "v":
+            if not self._visual_mode:
+                self._visual_mode = True
+                self._visual_anchor = self.cursor_location
+            else:
+                self._visual_mode = False
+                self._visual_anchor = None
+                self.selection = Selection.cursor(self.cursor_location)
+
+            event.stop()
+            event.prevent_default()
+
+
 class SearchTab(Container):
 
     def __init__(self, *args, **kwargs):
@@ -73,7 +202,7 @@ class SearchTab(Container):
                 yield ResultsList(id="results_list")
                 with Vertical(id="document_panel"):
                     yield Static("", id="doc_header")
-                    yield TextArea(id="doc_content", read_only=True)
+                    yield DocumentTextArea(id="doc_content", read_only=True)
                     with Horizontal(id="search_inside"):
                         yield Input(placeholder="Знайти в тексті...", id="in_text_input")
                         yield Button("Шукати", id="btn_find_in_text")
