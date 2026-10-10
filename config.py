@@ -17,7 +17,7 @@ def get_config_dir(app_name="drs"):
     config_dir.mkdir(parents=True, exist_ok=True)
     return config_dir
 
-SETTINGS_DB_PATH = str(get_config_dir("drs") / "settings-test.db")
+SETTINGS_DB_PATH = str(get_config_dir("drs") / "settings.db")
 
 filename_date_pattern = re.compile(r'(?:від\s?)?(\d{1,2})\.(\d{1,2})\.(\d{4}|\d{2})')
 document_number_pattern = re.compile(r'(?:№|\s|^)(\d+)')

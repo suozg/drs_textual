@@ -15,8 +15,10 @@ from utils import extract_text_libreoffice, get_document_date, normalize_text
 class ImportTab(Container):
     def compose(self) -> ComposeResult:
         with Vertical(id="import_main"):
-            yield Static("[bold red]УВАГА![/bold red] Дозволені тільки .doc, .docx, .rtf.")
-
+            yield Static(
+                "[bold red]УВАГА![/bold red] "
+                "Дозволені тільки .doc, .docx, .odt, .rtf."
+            )
             with Horizontal(id="import_db_row"):
                 yield Static("Цільова база даних:", classes="label")
                 yield Select(
@@ -129,7 +131,7 @@ class ImportTab(Container):
         try:
             cursor = conn.cursor()
             files_to_process = []
-            allowed_extensions = ('.doc', '.docx', '.rtf')
+            allowed_extensions = ('.doc', '.odt', '.docx', '.rtf')
 
             for root, _, files in os.walk(doc_folder):
                 for file in files:
