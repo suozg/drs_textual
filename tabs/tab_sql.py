@@ -1,5 +1,6 @@
 # tab_sql.py
 import csv
+from datetime import datetime
 
 from textual.app import ComposeResult
 from textual.widgets import Static, Button, TextArea, DataTable, Select
@@ -240,7 +241,9 @@ class SqlTab(Container):
             for row_key in grid.rows
         ]
 
-        filename = "sql_export.csv"
+        # filename = "sql_export.csv"
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        filename = f"sql_export_{timestamp}.csv"
 
         try:
             with open(
