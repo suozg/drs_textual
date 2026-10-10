@@ -8,13 +8,19 @@
 
 ## Скріншоти
 
-![1](screenshots/Screenshot 2026-10-10 11.08.12.png)
-![2](screenshots/Screenshot 2026-10-10 11.08.29.png)
-![3](screenshots/Screenshot 2026-10-10 11.08.36.png)
-![4](screenshots/Screenshot 2026-10-10 11.09.26.png)
-![5](screenshots/Screenshot 2026-10-10 11.09.38.png)
-![6](screenshots/Screenshot 2026-10-10 11.10.04.png)
-![7](screenshots/Screenshot 2026-10-10 11.10.15.png)
+![1](screenshots/Screenshot%202026-10-10%2011.08.12.png)
+
+![2](screenshots/Screenshot%202026-10-10%2011.08.29.png)
+
+![3](screenshots/Screenshot%202026-10-10%2011.08.36.png)
+
+![4](screenshots/Screenshot%202026-10-10%2011.09.26.png)
+
+![5](screenshots/Screenshot%202026-10-10%2011.09.38.png)
+
+![6](screenshots/Screenshot%202026-10-10%2011.10.04.png)
+
+![7](screenshots/Screenshot%202026-10-10%2011.10.15.png)
 
 ## Можливості
 
