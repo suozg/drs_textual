@@ -34,9 +34,9 @@ Input > .input--cursor {
 
 /* Верхня панель параметрів пошуку */
 #search_bar {
-    height: 5;
+    height: 3;
     width: 100%;
-    padding: 1 1;
+    padding: 0 1;
     align: left middle;              /* Вирівнювання елементів по лівому краю та центру висоти */
 }
 
@@ -198,8 +198,8 @@ ConfirmDeleteScreen {
     width: 55;
     height: auto;
     background: $surface;            /* Фоновий колір поверхні системи */
-    border: thick $primary;          /* Товста рамка акцентного кольору */
-    padding: 1 2;
+    border: solid $primary;          /* Тонка однорядкова рамка */
+    padding: 0 1;
 }
 
 /* Текст питання у вікні підтвердження */
@@ -421,7 +421,7 @@ ModalScreen {
 #dialog {
     background: $surface;
     border: solid $border;
-    padding: 1 2;
+    padding: 0 1;
 }
 
 /* Акцентні заголовки (.title) */
@@ -469,7 +469,7 @@ AboutTab Horizontal {
     background: $surface;            /* Темний фоновий колір для довідки */
     border: solid $border;          /* Строга темна рамка */
     margin-right: 1;                /* Відступ справа від блоку гри */
-    padding: 1;
+    padding: 0;
 }
 
 /* Права панель — контейнер гри Сокобан */
@@ -478,7 +478,7 @@ AboutTab Horizontal {
     height: 100%;
     background: $panel;            /* Тільки світліший тон фону для контрасту з лівою частиною */
     border: solid $accent;          /* Акцентна синя рамка навколо ігрової зони */
-    padding: 1;
+    padding: 0;
     align: center middle;           /* Центрування ігрових елементів */
 }
 
@@ -496,7 +496,7 @@ AboutTab Horizontal {
     height: 1fr;                    /* Займає максимальний доступний простір */
     content-align: center middle;   /* Центрування карти рівня всередині віджета */
     background: $surface;            /* Глибокий темний фон поля */
-    border: inner $border;          /* Внутрішня рамка для ефекту заглиблення */
+    border: solid $border;          /* Тонка однорядкова рамка */
     margin-bottom: 1;               /* Відступ між грою та кнопками перемикання рівнів */
 }
 
@@ -520,6 +520,5 @@ AboutTab Horizontal {
     width: 6;
     min-width: 6;
 }
-
 
 
