@@ -78,7 +78,7 @@ class SqlTab(Container):
         choices = []
 
         for db_id, db_name, db_path, db_password, is_active in databases:
-            label = f"{db_name} ({db_path})"
+            label = f"{db_name}"
             value = (db_path, db_password)
             choices.append((label, value))
 

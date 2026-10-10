@@ -230,10 +230,12 @@ ConfirmDeleteScreen {
     height: 1fr;
 }
 
-/* Рядок вибору бази даних для імпорту */
-#import_db_row {
+/* Рядки вибору бази даних */
+#import_db_row,
+#sql_db_row {
     width: 100%;
-    height: 3;
+    height: auto;
+    min-height: 3;
     margin: 0;
     align: left middle;
 }
@@ -253,15 +255,16 @@ ConfirmDeleteScreen {
     content-align: left middle;
 }
 
-/* Випадаючий список вибору БД (Select) */
-#import_db_select {
-    width: 30;
+/* Випадаючі списки (Select) */
+#import_db_select,
+#sql_db_select {
+    width: 35;
     min-width: 20;
-    height: 3;
+    height: auto;
+    max-height: 10;
     background: $surface;
     color: $foreground;
     border: solid $border;
-    content-align: left middle;
 }
 
 /* Випадаючий список у стані фокусу */
@@ -309,30 +312,11 @@ ConfirmDeleteScreen {
     height: 1fr;
 }
 
-/* Рядок вибору цільової БД для SQL-запиту */
-#sql_db_row {
-    width: 100%;
-    height: 3;
-    margin: 0;
-    align: left middle;
-}
-
 /* Підпис до поля вибору БД в SQL */
 #sql_db_row .label {
     width: 25;
     height: 3;
     padding: 1 1 0 0;
-}
-
-/* Випадаючий список БД для SQL-запитів */
-#sql_db_select {
-    width: 30;
-    min-width: 20;
-    height: 3;
-    background: $surface;
-    color: $foreground;
-    border: solid $border;
-    content-align: left middle;
 }
 
 /* Активний стан списку БД */
@@ -352,7 +336,7 @@ ConfirmDeleteScreen {
 #sql_label {
     width: 100%;
     height: 2;
-    margin: 1 0 0 0;
+    margin: 0 0 0 0;
 }
 
 /* Поле для написання SQL-запиту */
@@ -376,6 +360,80 @@ ConfirmDeleteScreen {
     margin: 1 0 0 0;
 }
 
+
+/* =========================================================
+   ВКЛАДКА НАЛАШТУВАНЬ БД
+   ========================================================= */
+
+/* Таблица подключённых баз данных */
+#db_table {
+    width: 100%;
+    height: 1fr;
+    min-height: 5;
+}
+
+/* Вкладка настроек баз данных и паролей */
+SettingsTab {
+    height: 1fr;
+    padding: 0 1;
+}
+
+/* Заголовки разделов */
+SettingsTab > Static {
+    height: 1;
+    margin: 0;
+}
+
+/* Таблица баз данных */
+#db_table {
+    width: 100%;
+    height: 1fr;
+    min-height: 5;
+}
+
+/* Кнопки управления базами */
+#settings_db_buttons {
+    height: 3;
+    margin: 0;
+}
+
+/* Подпись активной базы */
+#active_db_label {
+    height: 1;
+    margin: 0;
+}
+
+/* Выбор типа пароля */
+#pass_target {
+    height: 4;
+    margin: 0;
+    padding: 0;
+}
+
+/* Поля паролей */
+#old_pass {
+    margin-top: 1;
+}
+
+#new_pass1,
+#new_pass2 {
+    height: 3;
+    margin: 0;
+}
+
+/* Кнопка смены пароля */
+#btn_change_pass {
+    height: 3;
+    margin: 0;
+}
+
+/* Журнал сообщений */
+#settings_log {
+    height: 1fr;
+    max-height: 4;
+    min-height: 2;
+    margin-top: 1;
+}
 
 /* =========================================================
    ЗАГАЛЬНІ ЕЛЕМЕНТИ ІНТЕРФЕЙСУ (COMMON UI)

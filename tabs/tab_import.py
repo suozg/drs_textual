@@ -65,15 +65,16 @@ class ImportTab(Container):
 
         # Вимикаємо автоматичне реагування під час заповнення
         select.set_options([
-            (label, value)
+            (os.path.basename(value[0]), value)
             for label, value in choices
         ])
 
         if choices:
             select.value = choices[0][1]
             db_path, _ = choices[0][1]
+            # Показываем полный путь справа от списка
             self.query_one("#import_db_selected", Static).update(
-                f"Обрана: {os.path.basename(db_path)}"
+                f"Шлях: {db_path}"
             )
 
     def on_select_changed(self, event: Select.Changed) -> None:
@@ -87,8 +88,9 @@ class ImportTab(Container):
             return
 
         db_path, _ = event.value
+        # Показываем полный путь справа при изменении выбора
         self.query_one("#import_db_selected", Static).update(
-            f"Обрана: {os.path.basename(db_path)}"
+            f"Шлях: {db_path}"
         )
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
