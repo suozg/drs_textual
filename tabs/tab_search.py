@@ -212,9 +212,9 @@ class SearchTab(Container):
                 yield Input(placeholder='"прізв* ім* бать*"', id="search_input")
                 yield Button("Пошук", id="btn_search", variant="primary")
                 yield Button("∞", id="btn_all")
-                yield Static("Від:", id="date_label_start")
+                yield Static("📅", id="date_label_start")
                 yield Input(placeholder="РРРР-ММ-ДД", id="date_start", classes="date_in")
-                yield Static("До:", id="date_label_end")
+                yield Static("-", id="date_label_end")
                 yield Input(placeholder="РРРР-ММ-ДД", id="date_end", classes="date_in")
                 yield Button("Видалити", id="btn_delete", variant="error")
                 

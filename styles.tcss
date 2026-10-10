@@ -47,20 +47,28 @@ Input > .input--cursor {
     height: 3;
 }
 
-/* Текстові підписи "Від:" та "До:" біля полів дат */
-#date_label_start,
+/* Текстові підписи біля полів дат */
+#date_label_start {
+    width: 3;
+    min-width: 3;
+    height: 3;
+    content-align: center middle;   /* Центрування тексту всередині блоку */
+    margin-left: 1;
+}
+
 #date_label_end {
-    width: 4;
+    width: 3;
+    min-width: 3;
     height: 3;
     content-align: center middle;   /* Центрування тексту всередині блоку */
 }
 
-/* Поля введення дат "Від" і "До" */
+/* Поля введення дат */
 .date_in {
-    width: 13;
-    min-width: 13;
+    width: 16;
+    min-width: 16;
     height: 3;
-    margin-left: 1;
+    margin-left: 0;
 }
 
 /* Блок відображення кількості знайдених записів */
