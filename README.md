@@ -18,7 +18,7 @@
 
 ![4](screenshots/Screenshot%202026-10-10%2011.09.26.png)
 
-![5](screenshots/Screenshot%202026-10-10%2011.09.38.png)
+![5](screenshots/Screenshot%202026-10-10%2010.09.38.png)
 
 ![6](screenshots/Screenshot%202026-10-10%2011.10.04.png)
 
