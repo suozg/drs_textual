@@ -8,6 +8,8 @@
 
 ## Скріншоти
 
+![0](screenshots/Mac_000.png)
+
 ![1](screenshots/Screenshot%202026-10-10%2011.08.12.png)
 
 ![2](screenshots/Screenshot%202026-10-10%2011.08.29.png)
