@@ -79,7 +79,7 @@ def get_document_date(filename, root_path):
             else:
                 final_day = (date(final_year, final_month + 1, 1) - timedelta(days=1)).day
     else:
-        # Безпечний лог у консоль замість wx.CallAfter
+        # Безпечний лог у консоль 
         print(f"Попередження: Не вдалося витягнути дату з назви '{filename}' або шляху '{root_path}'.")
         final_year = current_date.year
         final_month = current_date.month

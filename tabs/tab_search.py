@@ -281,8 +281,6 @@ class SearchTab(Container):
 
         formatted_query = self.format_date_for_fts3(query)
 
-        # Аналог wx: оновити список БД перед пошуком
-        self.update_database_state()
         self.search_cancel_event.clear()
 
         self.query_one("#btn_search", Button).label = "Стоп"
@@ -352,7 +350,6 @@ class SearchTab(Container):
         for warning in warnings:
             all_results.append((warning, "", "", 0, 0, 0))
 
-        # Аналог wx
         all_results.sort(key=lambda x: (x[3] or 0, x[4] or 0, x[5] or 0), reverse=True)
         ui_results = [(r[0], r[1], r[2]) for r in all_results]
 
@@ -386,7 +383,6 @@ class SearchTab(Container):
             # Пошук
             # ----------------------------------------------------------
             else:
-                # wx має два варіанти: одна дата -> "=" | діапазон -> BETWEEN
                 cond = "BETWEEN ? AND ?" if start_num != end_num else "= ?"
                 sql = f"""SELECT filename, content, created_at, year, month, day FROM (
                             SELECT DISTINCT d.filename, d.content, d.created_at, d.year, d.month, d.day
@@ -598,19 +594,6 @@ class SearchTab(Container):
     # ------------------------------------------------------------------
     # Helpers
     # ------------------------------------------------------------------
-
-    def update_database_state(self):
-        """
-        В wx тут викликається: tab_settings.load_databases_into_ui()
-        В TUI це поки не потрібно, оскільки список БД читається непосредственно перед пошуком.
-        """
-        pass
-
-    def update_start_date(self, date_obj):
-        self.query_one("#date_start", Input).value = date_obj.strftime("%Y-%m-%d")
-
-    def set_count_message(self, message):
-        self.query_one("#lbl_count", Static).update(message)
 
     def finish_search(self, message):
         self.query_one("#btn_search", Button).label = "Пошук"
