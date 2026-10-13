@@ -9,6 +9,7 @@ from textual.widgets import Static, Button, Input, OptionList, TextArea
 from textual.widgets.option_list import Option
 from textual.screen import ModalScreen
 from textual.widgets.text_area import Selection
+from rich.text import Text
 
 import config
 from database import connect_to_specific_database, check_patch_db
@@ -45,6 +46,75 @@ class ResultsList(OptionList):
         self.highlighted = 0 if self.highlighted is None else max(self.highlighted - 1, 0)
 
 
+class MatchMap(Static):
+    """Вертикальна міні-карта розташування збігів у документі."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__("", *args, **kwargs)
+        self.match_lines = []
+        self.active_index = -1
+        self.total_lines = 1
+
+    def set_matches(self, lines, active_index, total_lines):
+        self.match_lines = list(lines)
+        self.active_index = active_index
+        self.total_lines = max(1, total_lines)
+        self.refresh_map()
+
+    def on_resize(self, event) -> None:
+        self.refresh_map()
+
+    def refresh_map(self) -> None:
+        height = self.size.height
+        if height <= 0:
+            return
+
+        rendered = Text(no_wrap=True, overflow="crop")
+        markers = {}
+        count = len(self.match_lines)
+
+        if count:
+            # Розташовуємо збіги пропорційно їхнім рядкам у документі.
+            denominator = max(1, self.total_lines - 1)
+            positions = [
+                round(max(0, min(line, self.total_lines - 1)) / denominator * (height - 1))
+                for line in self.match_lines
+            ]
+
+            # Якщо кілька збігів потрапили на один рядок індикатора,
+            # розводимо їх по сусідніх рядках, щоб не втратити стрілки.
+            # Одночасно всі стрілки вміщаються, коли збігів не більше за висоту.
+            if count <= height:
+                for i in range(count):
+                    positions[i] = max(positions[i], i)
+                for i in range(count - 1, -1, -1):
+                    positions[i] = min(positions[i], height - count + i)
+                for i in range(1, count):
+                    positions[i] = max(positions[i], positions[i - 1] + 1)
+
+            for index, y in enumerate(positions):
+                if y < height:
+                    if index == self.active_index:
+                        marker = "›"       # поточний збіг
+                    elif index < self.active_index:
+                        marker = "↑"       # збіги перед поточним
+                    else:
+                        marker = "↓"       # збіги після поточного
+                    markers[y] = marker
+
+        for y in range(height):
+            if y in markers:
+                marker = markers[y]
+                style = "bold" if marker == "›" else "bold"
+                rendered.append(marker, style=style)
+            else:
+                rendered.append(" ")
+            if y < height - 1:
+                rendered.append("\n")
+
+        self.update(rendered)
+
+
 class DocumentTextArea(TextArea):
     """Vim-подібна навігація текстом документа (з підтримкою UKR та ENG розкладок)."""
 
@@ -65,6 +135,19 @@ class DocumentTextArea(TextArea):
         self._pending_key = None
         self._visual_mode = False
         self._visual_anchor = None
+        self._target_line = None
+
+    def center_line(self, line: int) -> None:
+        self._target_line = line
+        self.app.call_after_refresh(self._scroll_target_to_center)
+
+    def _scroll_target_to_center(self) -> None:
+        if self._target_line is not None and self.size.height > 0:
+            self.scroll_cursor_visible(center=True, animate=False)
+
+    def on_resize(self, event) -> None:
+        if self._target_line is not None:
+            self.app.call_after_refresh(self._scroll_target_to_center)
 
     def copy_text(self, text: str) -> bool:
         """Копіювання до системного буфера обміну в різних ОС."""
@@ -224,7 +307,9 @@ class SearchTab(Container):
                 yield ResultsList(id="results_list")
                 with Vertical(id="document_panel"):
                     yield Static("", id="doc_header")
-                    yield DocumentTextArea(id="doc_content", read_only=True)
+                    with Horizontal(id="doc_view"):
+                        yield MatchMap(id="match_map")
+                        yield DocumentTextArea(id="doc_content", read_only=True)
                     with Horizontal(id="search_inside"):
                         yield Input(placeholder="Знайти в тексті...", id="in_text_input")
                         yield Button("Шукати", id="btn_find_in_text")
@@ -418,6 +503,7 @@ class SearchTab(Container):
         option_list.clear_options()
         self.query_one("#doc_header", Static).update("")
         self.query_one("#doc_content", TextArea).load_text("")
+        self.update_match_map()
 
         for filename, content, created_at in results:
             self.documents[filename] = (content, created_at)
@@ -456,8 +542,11 @@ class SearchTab(Container):
         self.query_one("#doc_content", TextArea).load_text(content or "")
 
         self.matches, self.match_index = [], -1
-        if self.query_one("#in_text_input", Input).value.strip(): self.search_in_text()
-        else: self.update_match_header(0)
+        if self.query_one("#in_text_input", Input).value.strip():
+            self.search_in_text()
+        else:
+            self.update_match_map()
+            self.update_match_header(0)
 
     def on_option_list_option_highlighted(self, event): self.show_document(event.option)
     def on_option_list_option_selected(self, event): self.show_document(event.option)
@@ -473,6 +562,7 @@ class SearchTab(Container):
 
         # Документ не выбран або Пустой запрос
         if not full_text or not query:
+            self.update_match_map()
             self.update_match_header(0)
             return
 
@@ -488,6 +578,8 @@ class SearchTab(Container):
         if self.matches:
             self.match_index = 0
             self.highlight_matches()
+        else:
+            self.update_match_map()
 
         self.update_match_header(len(self.matches))
 
@@ -499,6 +591,7 @@ class SearchTab(Container):
         if not self.matches: return
         self.match_index = index % len(self.matches)
         self.highlight_matches()
+        self.update_match_map()
 
     def highlight_matches(self):
         text_area = self.query_one("#doc_content", TextArea)
@@ -510,11 +603,24 @@ class SearchTab(Container):
             line = text.count("\n", 0, pos)
             last_newline = text.rfind("\n", 0, pos)
             column = pos if last_newline == -1 else pos - last_newline - 1
-
             text_area.cursor_location = (line, column)
-            text_area.scroll_cursor_visible()
+            text_area.center_line(line)
+            self.update_match_map()
         except Exception as e:
             self.app.notify(f"Помилка переходу до збігу: {e}", severity="error")
+
+    def update_match_map(self) -> None:
+        """Оновити індикатори всіх збігів і поточного збігу."""
+        try:
+            text_area = self.query_one("#doc_content", TextArea)
+            match_map = self.query_one("#match_map", MatchMap)
+            text = text_area.text or ""
+            lines = [text.count("\n", 0, pos) for pos in self.matches]
+            total_lines = text.count("\n") + 1 if text else 1
+            match_map.set_matches(lines, self.match_index, total_lines)
+        except Exception:
+            # Віджет може ще не бути змонтований під час початкового створення UI.
+            pass
 
     def update_match_header(self, count):
         header = self.query_one("#doc_header", Static)
@@ -599,7 +705,5 @@ class SearchTab(Container):
         self.query_one("#btn_search", Button).label = "Пошук"
         self.query_one("#search_status", Static).update("")
         self.query_one("#lbl_count", Static).update(message)
-
-
 
 
