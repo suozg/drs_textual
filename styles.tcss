@@ -285,22 +285,25 @@ ConfirmDeleteScreen {
     content-align: left middle;
 }
 
-/* Випадаючі списки (Select) */
+/* Випадаючі списки (Select) 
 #import_db_select,
 #sql_db_select {
-    width: 35;
+    width: 28;
     min-width: 20;
-    height: auto;
-    max-height: 10;
+    height: 3;
+    min-height: 3;
+    margin: 0;
+    padding: 0;
     background: $surface;
     color: $foreground;
-    border: solid $border;
+    border: none;
 }
 
-/* Випадаючий список у стані фокусу */
-#import_db_select:focus {
-    border: solid $accent;
+#import_db_select:focus,
+#sql_db_select:focus {
+    border: none;
 }
+
 
 /* Поле введення шляху до папки імпорту */
 #import_folder_input {
@@ -351,7 +354,7 @@ ConfirmDeleteScreen {
 
 /* Активний стан списку БД */
 #sql_db_select:focus {
-    border: solid $accent;
+    border: none;
 }
 
 /* Текст з інформацією про вибрану БД */
